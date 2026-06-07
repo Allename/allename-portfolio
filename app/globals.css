@@ -1,26 +1,118 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Portfolio-specific tokens available as Tailwind utilities */
+  --color-accent-blue: var(--accent-blue);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-text-muted: var(--text-muted);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ─── Single dark-only theme ─────────────────────────────────────────────── */
+:root {
+  /* Figma palette */
+  --background:   #111111;
+  --foreground:   #ffffff;
+  --bg-secondary: #1f1e1e;
+  --accent-blue:  #6cace4;
+  --text-muted:   #c4c4c4;
+
+  /* shadcn token map */
+  --card:                   #1f1e1e;
+  --card-foreground:        #ffffff;
+  --popover:                #1f1e1e;
+  --popover-foreground:     #ffffff;
+  --primary:                #6cace4;
+  --primary-foreground:     #111111;
+  --secondary:              #1f1e1e;
+  --secondary-foreground:   #ffffff;
+  --muted:                  #1f1e1e;
+  --muted-foreground:       #c4c4c4;
+  --accent:                 #1f1e1e;
+  --accent-foreground:      #6cace4;
+  --destructive:            #ef4444;
+  --border:                 rgba(198, 198, 198, 0.15);
+  --input:                  rgba(198, 198, 198, 0.15);
+  --ring:                   #6cace4;
+  --radius:                 0.5rem;
+
+  /* Name gradient — purple → pink → orange → cyan */
+  --gradient-name: linear-gradient(
+    90deg,
+    #a855f7 0%,
+    #ec4899 30%,
+    #f97316 60%,
+    #22d3ee 100%
+  );
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+
+  html {
+    @apply font-sans;
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    @apply antialiased;
+  }
+
+  ::selection {
+    background-color: #6cace440;
+    color: #ffffff;
+  }
+
+  /* Smooth scrolling for nav anchor links */
+  html {
+    scroll-behavior: smooth;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ─── Gradient text utility ──────────────────────────────────────────────── */
+.gradient-text {
+  background: var(--gradient-name);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Image-clipped text utility ─────────────────────────────────────────── */
+.text-image {
+  background-image: url('/images/text-img.JPG');
+  background-size: cover;
+  background-position: center;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
 }
