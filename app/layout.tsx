@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import CalendlyWidget from "@/components/CalendlyWidget"
 import MusicWidget from "@/components/MusicWidget"
+import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -44,6 +45,7 @@ export default function RootLayout({
         <Footer />
         <MusicWidget />
         <CalendlyWidget />
+        <Analytics />
       </body>
     </html>
   )
