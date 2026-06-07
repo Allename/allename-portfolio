@@ -18,9 +18,9 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Allename Anthony | Software Engineer",
+  title: "Allename Anthony | Frontend Engineer",
   description:
-    "Software engineer based in Toronto, Canada. Building things that live on the internet.",
+    "Frontend engineer based in Lagos, Nigeria. Building things that live on the internet.",
   icons: {
     icon: "/itachi-icon.jpg",
   },
