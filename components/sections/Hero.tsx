@@ -104,7 +104,7 @@ export default function Hero() {
             style={{
               backgroundImage: "url('/images/IMG_0582 2.JPG')",
               backgroundSize: "cover",
-              backgroundPosition: "center 38%",
+              backgroundPosition: "center 39%",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
