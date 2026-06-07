@@ -1,5 +1,6 @@
 "use client"
 
+import { useRef, useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { ExternalLink } from "lucide-react"
@@ -45,7 +46,7 @@ const projects = [
     image: "/projects/soundify.jpg",
     tags: ["React", "React Native", "Typescript"],
     demo: "https://www.getvendorstack.com/",
-    github: "#",
+    github: null,
     gradient: "from-[#0a1a2e] via-[#0f2d4d] to-[#1a4a7a]",
   },
   {
@@ -54,7 +55,7 @@ const projects = [
     image: "/projects/blockchain-explorer.jpg",
     tags: ["React", "Javascript", "TailwindCSS", "Redux"],
     demo: "https://requestmechanic.com",
-    github: "#",
+    github: null,
     gradient: "from-[#1a0a2e] via-[#2d1b4e] to-[#4a2080]",
   },
   {
@@ -63,7 +64,7 @@ const projects = [
     image: "/projects/gitprofile.jpg",
     tags: ["React", "Typescript", "Redux", "Ionic"],
     demo: "https://folawej.com",
-    github: "https://folawej.com",
+    github: null,
     gradient: "from-[#0a2e1a] via-[#0f4d2a] to-[#1a7a42]",
   },
   {
@@ -72,7 +73,7 @@ const projects = [
     image: "/projects/moviedb.jpg",
     tags: ["React.js", "Redux", "TheMovieDB API"],
     demo: "https://www.bluelight.studio",
-    github: "#",
+    github: null,
     gradient: "from-[#2e0a0a] via-[#4d1515] to-[#7a2020]",
   },
 ]
@@ -94,9 +95,23 @@ function ImagePreview({ src, alt }: { src: string; alt: string }) {
 }
 
 function IframePreview({ url, title }: { url: string; title: string }) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [scale, setScale] = useState(0.25)
+
+  useEffect(() => {
+    const updateScale = () => {
+      if (containerRef.current) {
+        setScale(containerRef.current.offsetWidth / 1280)
+      }
+    }
+    updateScale()
+    window.addEventListener("resize", updateScale)
+    return () => window.removeEventListener("resize", updateScale)
+  }, [])
+
   const isPlaceholder = !url || url === "#"
   return (
-    <div className="relative aspect-[16/10] overflow-hidden bg-[#0d0d0d]">
+    <div ref={containerRef} className="relative aspect-[16/10] overflow-hidden bg-[#0d0d0d]">
       {isPlaceholder ? (
         <div className="w-full h-full flex items-center justify-center text-[var(--text-muted)] text-xs">
           No live URL
@@ -109,7 +124,7 @@ function IframePreview({ url, title }: { url: string; title: string }) {
           style={{
             width: "1280px",
             height: "800px",
-            transform: "scale(0.25)",
+            transform: `scale(${scale})`,
             transformOrigin: "top left",
           }}
           sandbox="allow-scripts allow-same-origin"
