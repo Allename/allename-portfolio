@@ -46,8 +46,8 @@ export default function Navbar() {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="fixed top-0 inset-x-0 z-50 h-16 backdrop-blur-md border-b border-border"
-      style={{ backgroundColor: "rgba(31, 30, 30, 0.85)" }}
+      className="fixed top-0 inset-x-0 z-50 h-16 backdrop-blur-md lg:border-b border-border bg-background"
+      // style={{ backgroundColor: "rgba(31, 30, 30, 0.85)" }}
     >
       <nav className="max-w-5xl mx-auto h-full flex items-center justify-between px-6">
         <Link href="/" className="ring-offset-background rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
@@ -57,7 +57,7 @@ export default function Navbar() {
           </Avatar>
         </Link>
 
-        <div className="flex items-center gap-8">
+        <div className="items-center gap-8 hidden lg:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}

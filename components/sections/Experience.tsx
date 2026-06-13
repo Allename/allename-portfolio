@@ -16,8 +16,8 @@ const jobs = [
     year: 2026,
     monthPeriod: "Mar",
     bullets: [
-      "Developed reusable component library for the platform.",
-      "Improved performance of key user flows by 30%.",
+      "Contracted to improve and refactor the mobile application for smoother user experience",
+      'Improved the onboarding and chat features '
     ],
   },
   {
@@ -29,8 +29,8 @@ const jobs = [
     year: 2026,
     monthPeriod: "Jan",
     bullets: [
-      "Developed reusable component library for the platform.",
-      "Improved performance of key user flows by 30%.",
+      "Led a team of frontend engineers to deliver fully functional applications within a short contract window",
+      "Implemented features that currently serves 300+ seamlessly",
     ],
   },
   {
@@ -42,8 +42,7 @@ const jobs = [
     year: 2025,
     monthPeriod: "Feb",
     bullets: [
-      "Developed reusable component library for the platform.",
-      "Improved performance of key user flows by 30%.",
+      "Managed an application that helps users manage, edit and organize blogs and articles on wordpress with ease.",
     ],
   },
   {
@@ -55,8 +54,8 @@ const jobs = [
     year: 2024,
     monthPeriod: "Jun",
     bullets: [
-      "Built responsive landing pages and dashboard views using Vue.js.",
-      "Collaborated with the design team to implement pixel-perfect UI.",
+      "Migrated legacy class-based components to functional React components, enhancing maintainability by 40%.",
+      "Contributed to features that added 200 new users by bridging car owners with auto mechanics.",
     ],
   },
   {
@@ -68,8 +67,8 @@ const jobs = [
     year: 2023,
     monthPeriod: "Sept",
     bullets: [
-      "Developing screens and UI components for the web application using React and Tailwind.",
-      "Fixing UI issues and integrating backend APIs with Redux Saga.",
+      "Converted email design templates into responsive, user-facing HTML/CSS emails for critical communications.",
+      "Worked across multiple features, improving maintainability and leading to a 30% increase in users.",
     ],
   },
   {
@@ -81,8 +80,8 @@ const jobs = [
     year: 2023,
     monthPeriod: "Feb",
     bullets: [
-      "Built responsive landing pages and dashboard views using Vue.js.",
-      "Collaborated with the design team to implement pixel-perfect UI.",
+      "Embraced design-driven development to create visually appealing and user-friendly interfaces.",
+      "Worked extensively on the admin panel, leveraging backend APIs to handle data retrieval and manipulation.",
     ],
   },
   {
@@ -94,8 +93,8 @@ const jobs = [
     year: 2021,
     monthPeriod: "Sept",
     bullets: [
-      "Built responsive landing pages and dashboard views using Vue.js.",
-      "Collaborated with the design team to implement pixel-perfect UI.",
+      "Worked with the team to build and deliver a series of web and mobile applications and dashboards to track key business metrics, improving user engagement by 20%, and supported more informed decision-making.",
+      "Implemented clean architecture patterns, improving scalability and long-term maintainability of client applications.",
     ],
   },
 ]

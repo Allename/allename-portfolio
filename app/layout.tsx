@@ -40,7 +40,7 @@ export default function RootLayout({
         <link rel="icon" href="/images/itachi-icon.jpg" />
       </head>
       <body className="min-h-screen flex flex-col">
-        <Navbar />
+        {/* <Navbar /> */}
         <main className="flex-1">{children}</main>
         <Footer />
         <MusicWidget />

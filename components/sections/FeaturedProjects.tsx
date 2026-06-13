@@ -24,9 +24,9 @@ function GithubIcon({ className }: { className?: string }) {
 const projects = [
   {
     title: "Afristakes",
-    description: "Proxy provider website including authentication, dashboard and dynamic features.",
+    description: "Structured capital platform connecting African businesses with investors",
     image: "/projects/intense-proxy-1.jpg",
-    tags: ["React", "Typescript", "TailwindCSS", "Tanstack Router", "Zustand", "PusherJs"],
+    tags: ["React", "Typescript", "TailwindCSS", "Zustand", "PusherJs", "Shadcn"],
     demo: "https://afristakes.com",
     github: null,
     gradient: "from-[#1a1a2e] via-[#16213e] to-[#0f3460]",
@@ -42,9 +42,9 @@ const projects = [
   },
   {
     title: "Vendorstack",
-    description: "Music search application, displays informations about artists such as albums, biography, songs that are available on YouTube and much more using TheAudioDB API.",
+    description: "Creativity induced e-commerce application allowing you to shop and also create content to share with your circle of friends",
     image: "/projects/soundify.jpg",
-    tags: ["React", "React Native", "Typescript"],
+    tags: ["React", "React Native", "Typescript", "Websocket"],
     demo: "https://www.getvendorstack.com/",
     github: null,
     gradient: "from-[#0a1a2e] via-[#0f2d4d] to-[#1a4a7a]",
@@ -71,7 +71,7 @@ const projects = [
     title: "Bluelight Studios",
     description: "Solving user problems through the use of software and technologies",
     image: "/projects/moviedb.jpg",
-    tags: ["React.js", "Redux", "TheMovieDB API"],
+    tags: ["React.js", "TypeScript", "TailwindCSS", "Redux", "Zustand"],
     demo: "https://www.bluelight.studio",
     github: null,
     gradient: "from-[#2e0a0a] via-[#4d1515] to-[#7a2020]",
@@ -186,13 +186,13 @@ export default function FeaturedProjects() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-80px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 bg"
         >
           {projects.map((project) => (
             <motion.div
               key={project.title}
               variants={card}
-              className="flex flex-col rounded-lg overflow-hidden border border-border bg-[var(--bg-secondary)] group"
+              className="flex flex-col rounded-lg overflow-hidden border border-border group"
             >
               {/* Preview — swap PREVIEW_MODE above to change */}
               {PREVIEW_MODE === "image" && (
@@ -222,7 +222,7 @@ export default function FeaturedProjects() {
                   ))}
                 </div>
 
-                <div className="flex items-center gap-2 pt-1">
+                <div className="flex items-end justify-end gap-2 pt-1">
                   {project.demo && project.demo !== "#" && (
                     <a
                       href={project.demo}
@@ -231,17 +231,6 @@ export default function FeaturedProjects() {
                       className="flex items-center gap-1.5 text-xs border border-border px-3 py-1.5 rounded hover:border-[var(--accent-blue)] hover:text-[var(--accent-blue)] text-[var(--text-muted)] transition-all duration-200"
                     >
                       <ExternalLink className="w-3 h-3" />
-                      Live demo
-                    </a>
-                  )}
-                  {project.github && project.github !== "#" && (
-                    <a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 text-xs border border-border px-3 py-1.5 rounded hover:border-[var(--accent-blue)] hover:text-[var(--accent-blue)] text-[var(--text-muted)] transition-all duration-200"
-                    >
-                      <GithubIcon className="w-3 h-3" />
                     </a>
                   )}
                 </div>

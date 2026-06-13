@@ -82,7 +82,7 @@
   }
 
   body {
-    background-color: var(--background);
+    background-color: #000000;
     color: var(--foreground);
     @apply antialiased;
   }

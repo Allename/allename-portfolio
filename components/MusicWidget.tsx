@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
+import { ExternalLink } from "lucide-react"
 
 interface NowPlaying {
   isPlaying: boolean
@@ -103,7 +104,7 @@ export default function MusicWidget() {
       : 0
 
   return (
-    <div className="fixed right-4 top-1/2 -translate-y-1/2 z-40 flex flex-col items-end gap-3">
+    <div className="fixed right-4 top-1/7 lg:top-1/2 -translate-y-1/2 z-40 flex flex-col items-end gap-3">
 
       {/* ── Spotify ── */}
       <div
@@ -146,14 +147,18 @@ export default function MusicWidget() {
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <a
-                        href={nowPlaying.songUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs font-semibold text-foreground truncate block hover:text-[#1db954] transition-colors"
-                      >
-                        {nowPlaying.title}
-                      </a>
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <p className="text-xs font-semibold text-foreground truncate">{nowPlaying.title}</p>
+                        <a
+                          href={nowPlaying.songUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="shrink-0 text-[var(--text-muted)] hover:text-[#1db954] transition-colors"
+                          aria-label="Open on Spotify"
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
                       <p className="text-[10px] text-[var(--text-muted)] truncate">{nowPlaying.artist}</p>
                     </div>
                     <Equalizer />
