@@ -6,15 +6,41 @@
  */
 
 import http from "http"
+import fs from "fs"
+import path from "path"
+import { fileURLToPath } from "url"
 import { exec } from "child_process"
 
-const CLIENT_ID = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID
-const CLIENT_SECRET = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET
+// Load .env/.env.local so `node scripts/get-spotify-token.mjs` just works
+// (plain node doesn't auto-load env files the way Next.js does)
+const scriptDir = path.dirname(fileURLToPath(import.meta.url))
+for (const f of [".env.local", ".env"]) {
+  const p = path.join(scriptDir, "..", f)
+  if (!fs.existsSync(p)) continue
+  for (const line of fs.readFileSync(p, "utf8").split("\n")) {
+    const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/)
+    if (!m || process.env[m[1]] !== undefined) continue
+    let v = m[2].trim()
+    if (
+      (v.startsWith('"') && v.endsWith('"')) ||
+      (v.startsWith("'") && v.endsWith("'"))
+    ) {
+      v = v.slice(1, -1)
+    }
+    process.env[m[1]] = v
+  }
+}
+
+const CLIENT_ID =
+  process.env.SPOTIFY_CLIENT_ID || process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID
+const CLIENT_SECRET =
+  process.env.SPOTIFY_CLIENT_SECRET ||
+  process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET
 const REDIRECT_URI = "http://127.0.0.1:8888/callback"
 const PORT = 8888
 
 if (!CLIENT_ID || !CLIENT_SECRET) {
-  console.error("❌  Missing NEXT_PUBLIC_SPOTIFY_CLIENT_ID or NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET in env")
+  console.error("❌  Missing SPOTIFY_CLIENT_ID or SPOTIFY_CLIENT_SECRET in env (.env / .env.local)")
   process.exit(1)
 }
 

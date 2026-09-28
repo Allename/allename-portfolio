@@ -77,7 +77,7 @@ export default function MoreProjects() {
             <motion.div
               key={project.title}
               variants={item}
-              className="flex flex-col gap-3 p-5 rounded-lg border border-border bg-[var(--bg-secondary)] hover:border-[var(--accent-blue)]/40 transition-all duration-300"
+              className="flex flex-col gap-3 p-5 rounded-lg border border-border bg-[var(--bg-secondary)] hover:border-[var(--accent-red)]/40 transition-all duration-300"
             >
               <h3 className="font-semibold text-sm text-foreground">{project.title}</h3>
               <p className="text-xs text-[var(--text-muted)] leading-relaxed flex-1">{project.description}</p>
@@ -100,7 +100,7 @@ export default function MoreProjects() {
                     href={project.demo}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-xs border border-border px-3 py-1.5 rounded hover:border-[var(--accent-blue)] hover:text-[var(--accent-blue)] text-[var(--text-muted)] transition-all duration-200"
+                    className="flex items-center gap-1.5 text-xs border border-border px-3 py-1.5 rounded hover:border-[var(--accent-red)] hover:text-[var(--accent-red)] text-[var(--text-muted)] transition-all duration-200"
                   >
                     <ExternalLink className="w-3 h-3" />
                     Live demo
@@ -111,7 +111,7 @@ export default function MoreProjects() {
                     href={project.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-xs border border-border px-3 py-1.5 rounded hover:border-[var(--accent-blue)] hover:text-[var(--accent-blue)] text-[var(--text-muted)] transition-all duration-200"
+                    className="flex items-center gap-1.5 text-xs border border-border px-3 py-1.5 rounded hover:border-[var(--accent-red)] hover:text-[var(--accent-red)] text-[var(--text-muted)] transition-all duration-200"
                   >
                     <GithubIcon className="w-3 h-3" />
                   </a>

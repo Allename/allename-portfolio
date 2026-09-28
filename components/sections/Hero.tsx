@@ -1,8 +1,7 @@
 "use client"
 
-import { motion } from "framer-motion"
-import { Mail, MapPin } from "lucide-react"
-import Image from "next/image"
+import { motion, type Variants } from "framer-motion"
+import { MapPin } from "lucide-react"
 
 function LinkedinIcon({ className }: { className?: string }) {
   return (
@@ -37,126 +36,178 @@ function MediumIcon({ className }: { className?: string }) {
 }
 
 const socialLinks = [
-  {
-    label: "Send an email",
-    href: "mailto:allename.dev@gmail.com",
-    icon: Mail,
-  },
-  {
-    label: "LinkedIn",
-    href: "https://linkedin.com/in/allename",
-    icon: LinkedinIcon,
-  },
-  {
-    label: "Github",
-    href: "https://github.com/allename",
-    icon: GithubIcon,
-  },
-  {
-    label: "Dev.to",
-    href: "https://dev.to/allename_dev",
-    icon: DevToIcon,
-  },
-  {
-    label: "Medium",
-    href: "https://medium.com/@allename",
-    icon: MediumIcon,
-  },
+  { label: "LinkedIn", href: "https://linkedin.com/in/allename", icon: LinkedinIcon },
+  { label: "Github", href: "https://github.com/allename", icon: GithubIcon },
+  { label: "Dev.to", href: "https://dev.to/allename_dev", icon: DevToIcon },
+  { label: "Medium", href: "https://medium.com/@allename", icon: MediumIcon },
 ]
 
-const container = {
+const feathers = [
+  { left: "10%", size: 14, duration: "24s", delay: "0s", x: "70px", opacity: 0.14 },
+  { left: "42%", size: 10, duration: "30s", delay: "7s", x: "-50px", opacity: 0.1 },
+  { left: "70%", size: 16, duration: "26s", delay: "14s", x: "90px", opacity: 0.12 },
+]
+
+function Feather({ size }: { size: number }) {
+  return (
+    <svg width={size} height={size * 2} viewBox="0 0 20 40" fill="none" aria-hidden="true">
+      <path
+        d="M10 1C5 8 2 16 3 27c1 8 4 12 7 12s6-4 7-12C18 16 15 8 10 1z"
+        fill="#c92a33"
+        opacity="0.9"
+      />
+      <path d="M10 4v34" stroke="#0b0a0a" strokeWidth="0.8" opacity="0.6" />
+    </svg>
+  )
+}
+
+const container: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+    transition: { staggerChildren: 0.12, delayChildren: 0.15 },
   },
 }
 
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+const item: Variants = {
+  hidden: { opacity: 0, y: 18 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: [0.21, 0.47, 0.32, 0.98] },
+  },
 }
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex flex-col justify-center pt-16 bg-background overflow-hidden">
+    <section className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-background">
+      {/* Giant rotating sharingan watermark */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/itachi.sharingan.svg"
+        alt=""
+        aria-hidden="true"
+        className="sharingan-spin absolute -right-[15%] top-1/2 -translate-y-1/2 w-[55vw] max-w-[720px] opacity-[0.12] mix-blend-screen pointer-events-none select-none"
+        style={{ filter: "sepia(1) saturate(3) hue-rotate(310deg)" }}
+      />
 
-      {/* Mobile-only background portrait */}
-      <div className="absolute inset-0">
-        <Image
-          src="/images/itachi-icon.jpg"
-          alt=""
-          fill
-          className="object-cover object-top opacity-30 mix-blend-luminosity"
-          aria-hidden="true"
-          priority
-        />
-        {/* Fade edges into the background so it doesn't feel pasted */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#111111] via-transparent to-[#111111]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#111111]/60 via-transparent to-[#111111]/60" />
+      {/* Drifting crow feathers */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        {feathers.map((f, i) => (
+          <span
+            key={i}
+            className="feather"
+            style={
+              {
+                left: f.left,
+                "--feather-duration": f.duration,
+                "--feather-delay": f.delay,
+                "--feather-x": f.x,
+                "--feather-opacity": f.opacity,
+              } as React.CSSProperties
+            }
+          >
+            <Feather size={f.size} />
+          </span>
+        ))}
       </div>
+
+      {/* Vertical Japanese rail */}
+      <span
+        aria-hidden="true"
+        className="vertical-rl absolute right-6 top-1/2 -translate-y-1/2 hidden lg:block font-display text-sm tracking-[0.5em] text-[var(--text-muted)]/35 select-none"
+      >
+        うちはイタチ
+      </span>
 
       <div className="relative z-10 w-full max-w-5xl mx-auto px-6 py-24">
         <motion.div
           variants={container}
           initial="hidden"
           animate="show"
-          className="flex flex-col gap-6"
+          className="flex flex-col gap-7"
         >
-          <motion.p variants={item} className="text-sm text-[var(--text-muted)] tracking-widest uppercase">
-            Hey, I&apos;m
+          <motion.p
+            variants={item}
+            className="font-mono text-xs tracking-[0.35em] uppercase text-[var(--text-muted)]"
+          >
+            Frontend Engineer
           </motion.p>
 
-          <motion.h1
-            variants={item}
-            className="text-[30px] md:text-[90px] font-bold leading-tight uppercase"
-            style={{
-              backgroundImage: "url('/images/IMG_0582 2.JPG')",
-              backgroundSize: "cover",
-              backgroundPosition: "center 39%",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-              color: "transparent",
-              WebkitTextStroke: "1px rgba(255, 255, 255, 0.35)",
-            }}
-          >
-            Allename Anthony
+          {/* Editorial stacked name */}
+          <motion.h1 variants={item} className="leading-[0.95] font-bold tracking-tight">
+            <span className="block text-[clamp(3rem,10vw,7.5rem)] uppercase">Allename</span>
+            <span className="block text-[clamp(3rem,10vw,7.5rem)] uppercase">
+              Anthony
+            </span>
           </motion.h1>
 
           <motion.p
             variants={item}
-            className="text-[var(--text-muted)] leading-relaxed"
+            className="max-w-md text-sm md:text-base text-[var(--text-muted)] leading-relaxed"
           >
-            Frontend Engineer experienced in building pixels on the web. I care deeply about clean architecture, maintainable code, and creating experiences users genuinely enjoy.
+            Clean architecture, maintainable code, and experiences users genuinely
+            enjoy that&apos;s the craft I care about.
           </motion.p>
 
-          <motion.div variants={item} className="flex flex-wrap gap-3 pt-4">
-            {socialLinks.map((link) => {
+          <motion.a
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            whileHover={{ y: -2 }}
+            href="mailto:allename.dev@gmail.com"
+            className="flex w-fit items-center gap-2 px-6 py-3 rounded bg-[var(--accent-red)] text-white text-sm shadow-[0_0_24px_rgba(201,42,51,0.3)] hover:bg-[#e03e48] transition-all duration-200"
+          >
+            Let's work
+          </motion.a>
+
+          {/* Numbered editorial links */}
+          <motion.nav variants={item} className="flex flex-wrap gap-x-7 gap-y-3 pt-3">
+            {socialLinks.map((link, i) => {
               const Icon = link.icon
               return (
-                <motion.a
+                <a
                   key={link.label}
                   href={link.href}
                   target={link.href.startsWith("mailto") ? undefined : "_blank"}
                   rel="noopener noreferrer"
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="flex items-center gap-2 px-4 py-2 rounded border border-border text-sm text-[var(--text-muted)] hover:text-foreground hover:border-[var(--accent-blue)] transition-all duration-200"
+                  className="group flex items-baseline gap-1.5 text-sm text-[var(--text-muted)] hover:text-foreground transition-colors duration-200"
                 >
-                  <Icon className="w-4 h-4" />
-                  <p className='hidden md:block lg:block'>{link.label}</p>
-                </motion.a>
+                  <span className="font-mono text-[10px] text-[var(--accent-red)]/80">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="brush-link">{link.label}</span>
+                  <Icon className="w-3 h-3 self-center opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
+                </a>
               )
             })}
-          </motion.div>
+          </motion.nav>
 
-          <motion.div variants={item} className="flex items-center gap-2 pt-4 text-[var(--text-muted)] text-sm">
-            <MapPin className='h-4 w-5 text-[var(--text-muted)]' />
+          <motion.div
+            variants={item}
+            className="flex items-center gap-2 pt-2 text-[var(--text-muted)]/70 text-xs font-mono tracking-wider"
+          >
+            <MapPin className="h-3.5 w-3.5" />
             <p>Lagos, Nigeria</p>
           </motion.div>
         </motion.div>
       </div>
+
+      {/* Scroll cue */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.4, duration: 0.8 }}
+        className="absolute bottom-8 left-6 md:left-12 flex items-center gap-3 text-[var(--text-muted)]/50"
+      >
+        <span className="font-mono text-[10px] tracking-[0.3em] uppercase">Scroll</span>
+        <motion.span
+          animate={{ scaleY: [1, 0.4, 1] }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+          className="block w-px h-10 origin-top bg-gradient-to-b from-[var(--accent-red)] to-transparent"
+        />
+      </motion.div>
     </section>
   )
 }

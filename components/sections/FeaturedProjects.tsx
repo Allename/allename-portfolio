@@ -1,10 +1,11 @@
 "use client"
 
 import { useRef, useEffect, useState } from "react"
-import { motion } from "framer-motion"
+import { motion, type Variants } from "framer-motion"
 import Image from "next/image"
 import { ExternalLink } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import SectionHeading from "@/components/SectionHeading"
 
 // ─── Toggle preview mode here ─────────────────────────────────────────────────
 // "image"   → static screenshot from /public/projects/
@@ -158,42 +159,43 @@ function BrowserPreview({ url, title, gradient }: { url: string; title: string; 
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-const container = {
+const container: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.1 } },
 }
 
-const card = {
-  hidden: { opacity: 0, y: 30 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+const card: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.55, ease: [0.21, 0.47, 0.32, 0.98] },
+  },
 }
 
 export default function FeaturedProjects() {
   return (
     <section id="projects" className="py-24">
       <div className="max-w-5xl mx-auto px-6">
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-xs text-[var(--text-muted)] tracking-widest uppercase mb-10"
-        >
-          Featured Projects
-        </motion.p>
+        <SectionHeading index="02" title="Featured Projects" kanji="作品" />
 
         <motion.div
           variants={container}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-80px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 bg"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {projects.map((project) => (
+          {projects.map((project, i) => (
             <motion.div
               key={project.title}
               variants={card}
-              className="flex flex-col rounded-lg overflow-hidden border border-border group"
+              className="relative flex flex-col rounded-lg overflow-hidden border border-border group hover:border-[var(--accent-red)]/40 transition-colors duration-300"
             >
+              {/* Editorial index */}
+              <span className="absolute top-2 left-3 z-10 font-mono text-[10px] tracking-widest text-[var(--text-muted)]/70 bg-[#0b0a0a]/80 px-1.5 py-0.5 rounded">
+                {String(i + 1).padStart(3, "0")}
+              </span>
               {/* Preview — swap PREVIEW_MODE above to change */}
               {PREVIEW_MODE === "image" && (
                 <ImagePreview src={project.image} alt={project.title} />
@@ -215,7 +217,7 @@ export default function FeaturedProjects() {
                     <Badge
                       key={tag}
                       variant="secondary"
-                      className="text-[8px] px-2 py-0.5 bg-[#111111] text-[var(--text-muted)] border-border hover:text-[var(--accent-blue)] transition-colors rounded uppercase"
+                      className="text-[8px] px-2 py-0.5 bg-[#171314] text-[var(--text-muted)] border-border group-hover:text-foreground transition-colors rounded uppercase"
                     >
                       {tag}
                     </Badge>
@@ -228,7 +230,7 @@ export default function FeaturedProjects() {
                       href={project.demo}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 text-xs border border-border px-3 py-1.5 rounded hover:border-[var(--accent-blue)] hover:text-[var(--accent-blue)] text-[var(--text-muted)] transition-all duration-200"
+                      className="flex items-center gap-1.5 text-xs border border-border px-3 py-1.5 rounded hover:border-[var(--accent-red)] hover:text-[var(--accent-red)] text-[var(--text-muted)] transition-all duration-200"
                     >
                       <ExternalLink className="w-3 h-3" />
                     </a>

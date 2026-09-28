@@ -60,23 +60,18 @@ export default function CalendlyWidget() {
       <button
         onClick={openCalendly}
         aria-label="Book a call"
-        className="
+        className="floating-widget
           fixed bottom-5 right-5 z-[9999]
           flex items-center justify-center
-          rounded-full bg-[#5e5d5d] text-white
-          shadow-lg transition-all duration-200
-          hover:scale-105 hover:bg-[#4f4e4e]
-          h-14 w-14
-          md:h-16 md:w-auto md:px-6 md:py-3 cursor-pointer
+          rounded-full h-14 w-14 md:h-16 md:w-16
+          bg-[var(--accent-red)] text-white
+          shadow-[0_0_24px_rgba(201,42,51,0.35)]
+          transition-all duration-200
+          hover:scale-105 hover:shadow-[0_0_36px_rgba(201,42,51,0.55)]
+          cursor-pointer
         "
       >
-        {/* Mobile */}
         <CalendarDays className="h-6 w-6" />
-
-        {/* Desktop */}
-        {/* <span className="hidden md:block font-medium">
-          Book a call
-        </span> */}
       </button>
     </>
   );

@@ -7,7 +7,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-mincho);
 
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -27,46 +27,44 @@
   --color-ring: var(--ring);
 
   /* Portfolio-specific tokens available as Tailwind utilities */
-  --color-accent-blue: var(--accent-blue);
+  --color-accent-red: var(--accent-red);
   --color-bg-secondary: var(--bg-secondary);
   --color-text-muted: var(--text-muted);
 }
 
-/* ─── Single dark-only theme ─────────────────────────────────────────────── */
+/* ─── Uchiha dark theme ──────────────────────────────────────────────────── */
 :root {
-  /* Figma palette */
-  --background:   #111111;
-  --foreground:   #ffffff;
-  --bg-secondary: #1f1e1e;
-  --accent-blue:  #6cace4;
-  --text-muted:   #c4c4c4;
+  --background:   #0b0a0a;
+  --foreground:   #f2efec;
+  --bg-secondary: #171314;
+  --accent-red:   #c92a33;
+  --text-muted:   #a39b97;
 
   /* shadcn token map */
-  --card:                   #1f1e1e;
-  --card-foreground:        #ffffff;
-  --popover:                #1f1e1e;
-  --popover-foreground:     #ffffff;
-  --primary:                #6cace4;
-  --primary-foreground:     #111111;
-  --secondary:              #1f1e1e;
-  --secondary-foreground:   #ffffff;
-  --muted:                  #1f1e1e;
-  --muted-foreground:       #c4c4c4;
-  --accent:                 #1f1e1e;
-  --accent-foreground:      #6cace4;
-  --destructive:            #ef4444;
-  --border:                 rgba(198, 198, 198, 0.15);
-  --input:                  rgba(198, 198, 198, 0.15);
-  --ring:                   #6cace4;
+  --card:                   #171314;
+  --card-foreground:        #f2efec;
+  --popover:                #171314;
+  --popover-foreground:     #f2efec;
+  --primary:                #c92a33;
+  --primary-foreground:     #ffffff;
+  --secondary:              #171314;
+  --secondary-foreground:   #f2efec;
+  --muted:                  #171314;
+  --muted-foreground:       #a39b97;
+  --accent:                 #171314;
+  --accent-foreground:      #c92a33;
+  --destructive:            #c92a33;
+  --border:                 rgba(242, 239, 236, 0.09);
+  --input:                  rgba(242, 239, 236, 0.09);
+  --ring:                   #c92a33;
   --radius:                 0.5rem;
 
-  /* Name gradient — purple → pink → orange → cyan */
-  --gradient-name: linear-gradient(
+  /* Crimson fade — used for hairline dividers & glows */
+  --gradient-red: linear-gradient(
     90deg,
-    #a855f7 0%,
-    #ec4899 30%,
-    #f97316 60%,
-    #22d3ee 100%
+    transparent 0%,
+    rgba(201, 42, 51, 0.7) 50%,
+    transparent 100%
   );
 }
 
@@ -79,40 +77,173 @@
   html {
     @apply font-sans;
     color-scheme: dark;
+    scroll-behavior: smooth;
   }
 
   body {
-    background-color: #000000;
+    background-color: #070606;
     color: var(--foreground);
     @apply antialiased;
   }
 
   ::selection {
-    background-color: #6cace440;
+    background-color: rgba(201, 42, 51, 0.35);
     color: #ffffff;
   }
 
-  /* Smooth scrolling for nav anchor links */
-  html {
-    scroll-behavior: smooth;
+  /* Ink-black scrollbar with a crimson thumb */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0b0a0a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2a1416;
+    border-radius: 8px;
+    border: 2px solid #0b0a0a;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-red);
   }
 }
 
-/* ─── Gradient text utility ──────────────────────────────────────────────── */
-.gradient-text {
-  background: var(--gradient-name);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* ─── Paper / ink grain overlay ──────────────────────────────────────────── */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* ─── Image-clipped text utility ─────────────────────────────────────────── */
-.text-image {
-  background-image: url('/images/text-img.JPG');
-  background-size: cover;
-  background-position: center;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* ─── Typography helpers ─────────────────────────────────────────────────── */
+.font-display {
+  font-family: var(--font-mincho), serif;
+}
+.vertical-rl {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+.text-outline {
   color: transparent;
+  -webkit-text-stroke: 1px rgba(242, 239, 236, 0.28);
+}
+
+/* ─── Crimson hairline divider ───────────────────────────────────────────── */
+.red-hairline {
+  height: 1px;
+  background: var(--gradient-red);
+}
+
+/* ─── Slow sharingan spin (hover / ambient) ──────────────────────────────── */
+@keyframes sharingan-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.sharingan-spin {
+  animation: sharingan-spin 90s linear infinite;
+}
+.group:hover .sharingan-spin-hover {
+  animation: sharingan-spin 2.5s linear infinite;
+}
+
+/* ─── Marquee strip ──────────────────────────────────────────────────────── */
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-x 36s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* ─── Drifting crow feather ──────────────────────────────────────────────── */
+@keyframes feather-drift {
+  0% {
+    transform: translate(0, -10vh) rotate(-15deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: var(--feather-opacity, 0.25);
+  }
+  90% {
+    opacity: var(--feather-opacity, 0.25);
+  }
+  100% {
+    transform: translate(var(--feather-x, 40px), 110vh) rotate(20deg);
+    opacity: 0;
+  }
+}
+.feather {
+  position: absolute;
+  top: 0;
+  animation: feather-drift var(--feather-duration, 18s) linear infinite;
+  animation-delay: var(--feather-delay, 0s);
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+/* ─── Brush underline for links ──────────────────────────────────────────── */
+.brush-link {
+  position: relative;
+}
+.brush-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 2px;
+  width: 100%;
+  background: var(--accent-red);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.35s cubic-bezier(0.21, 0.47, 0.32, 0.98);
+}
+.brush-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sharingan-spin,
+  .sharingan-spin-hover,
+  .marquee-track,
+  .feather {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ─── Kunai cursor: hide native pointer on precise devices ───────────────── */
+@media (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
+}
+
+/* ─── Preloader gating: nothing shows until loading completes ────────────── */
+[data-loading="true"] .site-content {
+  visibility: hidden;
+}
+[data-loading="true"] .floating-widget {
+  opacity: 0;
+  pointer-events: none;
+}
+.floating-widget {
+  transition: opacity 0.4s ease;
+}
+
+/* Hide floating widgets while the loading screen is active */
+body[data-loading] #music-widget,
+body[data-loading] .calendly-badge-widget {
+  display: none !important;
 }

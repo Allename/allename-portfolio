@@ -50,7 +50,7 @@ function Equalizer() {
       {[1, 2, 3].map((i) => (
         <motion.span
           key={i}
-          className="w-[3px] rounded-sm bg-[#1db954]"
+          className="w-[3px] rounded-sm bg-[var(--accent-red)]"
           animate={{ height: ["4px", "12px", "6px", "10px", "4px"] }}
           transition={{
             duration: 1.2,
@@ -69,6 +69,7 @@ function Equalizer() {
 export default function MusicWidget() {
   const [nowPlaying, setNowPlaying] = useState<NowPlaying>({ isPlaying: false })
   const [spotifyHovered, setSpotifyHovered] = useState(false)
+  const [spotifyOpen, setSpotifyOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
   // Lightweight background fetch — only updates the live dot
@@ -98,13 +99,15 @@ export default function MusicWidget() {
     if (hovered) fetchNowPlaying({ showLoading: true })
   }
 
+  // Card shows on hover (desktop) or tap (touch)
+  const showCard = spotifyHovered || spotifyOpen
   const progress =
     nowPlaying.progress && nowPlaying.duration
       ? (nowPlaying.progress / nowPlaying.duration) * 100
       : 0
 
   return (
-    <div className="fixed right-4 top-1/7 lg:top-1/2 -translate-y-1/2 z-40 flex flex-col items-end gap-3">
+    <div id="music-widget" className="floating-widget fixed right-4 top-1/7 lg:top-1/2 -translate-y-1/2 z-40 flex flex-col items-end gap-3 mt-8">
 
       {/* ── Spotify ── */}
       <div
@@ -114,7 +117,7 @@ export default function MusicWidget() {
       >
         {/* Expanded now-playing card */}
         <AnimatePresence>
-          {spotifyHovered && (
+          {showCard && (
             <motion.div
               initial={{ opacity: 0, x: 12, scale: 0.95 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
@@ -153,7 +156,7 @@ export default function MusicWidget() {
                           href={nowPlaying.songUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="shrink-0 text-[var(--text-muted)] hover:text-[#1db954] transition-colors"
+                          className="shrink-0 text-[var(--text-muted)] hover:text-[var(--accent-red)] transition-colors"
                           aria-label="Open on Spotify"
                         >
                           <ExternalLink className="w-3 h-3" />
@@ -166,7 +169,7 @@ export default function MusicWidget() {
                   {/* Progress bar */}
                   <div className="h-0.5 bg-border rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-[#1db954] rounded-full transition-all duration-1000"
+                      className="h-full bg-[var(--accent-red)] rounded-full transition-all duration-1000"
                       style={{ width: `${progress}%` }}
                     />
                   </div>
@@ -182,14 +185,19 @@ export default function MusicWidget() {
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
+          onClick={() => {
+            const next = !spotifyOpen
+            setSpotifyOpen(next)
+            if (next) fetchNowPlaying({ showLoading: true })
+          }}
           className="w-9 h-9 rounded-full bg-[#1f1e1e] border border-border flex items-center justify-center relative"
           aria-label="Spotify"
         >
-          <SpotifyIcon className="w-4 h-4 text-[#1db954]" />
+          <SpotifyIcon className="w-4 h-4 text-[var(--accent-red)]" />
           {/* Live dot */}
           {nowPlaying.isPlaying && (
             <motion.span
-              className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#1db954]"
+              className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--accent-red)]"
               animate={{ opacity: [1, 0.3, 1] }}
               transition={{ duration: 1.5, repeat: Infinity }}
             />

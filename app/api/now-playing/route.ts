@@ -1,10 +1,19 @@
-const CLIENT_ID = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID!
-const CLIENT_SECRET = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET!
-const REFRESH_TOKEN = process.env.NEXT_PUBLIC_REFRESH_TOKEN!
+const CLIENT_ID =
+  process.env.SPOTIFY_CLIENT_ID || process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID
+const CLIENT_SECRET =
+  process.env.SPOTIFY_CLIENT_SECRET || process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET
+const REFRESH_TOKEN =
+  process.env.SPOTIFY_REFRESH_TOKEN || process.env.NEXT_PUBLIC_REFRESH_TOKEN
 
-const basic = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString("base64")
+const basic =
+  CLIENT_ID && CLIENT_SECRET
+    ? Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString("base64")
+    : null
 
 async function getAccessToken(): Promise<string> {
+  if (!basic || !REFRESH_TOKEN) {
+    throw new Error("Missing Spotify env vars")
+  }
   const res = await fetch("https://accounts.spotify.com/api/token", {
     method: "POST",
     headers: {
@@ -19,6 +28,10 @@ async function getAccessToken(): Promise<string> {
   })
 
   const data = await res.json()
+  if (!res.ok || !data.access_token) {
+    console.error("Spotify token refresh failed:", JSON.stringify(data))
+    throw new Error("Spotify token refresh failed")
+  }
   return data.access_token
 }
 
@@ -56,7 +69,8 @@ export async function GET() {
     const duration: number = song.item.duration_ms
 
     return Response.json({ isPlaying, title, artist, album, albumArt, songUrl, progress, duration })
-  } catch {
+  } catch (e) {
+    console.error("now-playing failed:", e)
     return Response.json({ isPlaying: false })
   }
 }
