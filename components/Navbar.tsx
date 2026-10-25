@@ -1,21 +1,24 @@
 "use client"
 
-import { motion, useScroll, useSpring } from "framer-motion"
+import { useState } from "react"
+import { motion, useScroll, useSpring, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import Image from "next/image"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Menu, X } from "lucide-react"
 
 const navLinks = [
-  { label: "Experience", href: "/#experience" },
-  { label: "Projects", href: "/projects" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Resume", href: "https://drive.google.com/file/d/1uqcMCticHEeKxROKatBBj73AINeHiPIZ/view?usp=sharing", external: true },
+  { label: "Projects", href: "/projects", external: false },
+  { label: "Contact", href: "/#contact", external: false },
 ]
 
 export default function Navbar() {
   const { scrollYProgress } = useScroll()
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.4 })
+  const [menuOpen, setMenuOpen] = useState(false)
 
   return (
+    <>
     <motion.header
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
@@ -46,18 +49,95 @@ export default function Navbar() {
           </span>
         </Link>
 
-        <div className="flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm text-[var(--text-muted)] hover:text-foreground transition-colors duration-200"
-            >
-              {link.label}
-            </Link>
-          ))}
+        {/* Desktop links */}
+        <div className="hidden md:flex items-center gap-8">
+          {navLinks.map((link) =>
+            link.external ? (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-[var(--text-muted)] hover:text-foreground transition-colors duration-200"
+              >
+                {link.label}
+              </a>
+            ) : (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-sm text-[var(--text-muted)] hover:text-foreground transition-colors duration-200"
+              >
+                {link.label}
+              </Link>
+            )
+          )}
         </div>
+
+        {/* Mobile hamburger */}
+        <button
+          className="md:hidden flex items-center justify-center w-9 h-9 rounded-md text-[var(--text-muted)] hover:text-foreground transition-colors"
+          onClick={() => setMenuOpen((v) => !v)}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+        >
+          {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </nav>
+
+      {/* Mobile dropdown */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18 }}
+            className="md:hidden border-t border-border bg-[#0b0a0a]/95 backdrop-blur-md"
+          >
+            <div className="max-w-5xl mx-auto px-6 py-4 flex flex-col gap-4">
+              {navLinks.map((link) =>
+                link.external ? (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-[var(--text-muted)] hover:text-foreground transition-colors duration-200"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="text-sm text-[var(--text-muted)] hover:text-foreground transition-colors duration-200"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.header>
+
+    {/* Backdrop — sibling to header so it sits below z-50 and receives touch events */}
+    <AnimatePresence>
+      {menuOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18 }}
+          className="md:hidden fixed inset-0 top-16 z-40"
+          onClick={() => setMenuOpen(false)}
+          onTouchStart={() => setMenuOpen(false)}
+        />
+      )}
+    </AnimatePresence>
+    </>
   )
 }
