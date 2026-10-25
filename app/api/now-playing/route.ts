@@ -65,10 +65,11 @@ export async function GET() {
     const album: string = song.item.album.name
     const albumArt: string = song.item.album.images[0]?.url ?? ""
     const songUrl: string = song.item.external_urls.spotify
+    const songUri: string = song.item.uri
     const progress: number = song.progress_ms
     const duration: number = song.item.duration_ms
 
-    return Response.json({ isPlaying, title, artist, album, albumArt, songUrl, progress, duration })
+    return Response.json({ isPlaying, title, artist, album, albumArt, songUrl, songUri, progress, duration })
   } catch (e) {
     console.error("now-playing failed:", e)
     return Response.json({ isPlaying: false })

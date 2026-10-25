@@ -6,9 +6,9 @@ import Image from "next/image"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 
 const navLinks = [
-  { label: "Experience", href: "#experience" },
-  { label: "Projects", href: "#projects" },
-  { label: "Contact", href: "#contact" },
+  { label: "Experience", href: "/#experience" },
+  { label: "Projects", href: "/projects" },
+  { label: "Contact", href: "/#contact" },
 ]
 
 export default function Navbar() {

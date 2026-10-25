@@ -1,119 +1,102 @@
 "use client"
 
 import { useRef, useEffect, useState } from "react"
-import { motion, type Variants } from "framer-motion"
-import Image from "next/image"
+import { motion, AnimatePresence, type Variants } from "framer-motion"
+import Link from "next/link"
 import { ExternalLink } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import SectionHeading from "@/components/SectionHeading"
+import { projects, FEATURED_COUNT } from "@/lib/projects"
 
-// ─── Toggle preview mode here ─────────────────────────────────────────────────
-// "image"   → static screenshot from /public/projects/
-// "iframe"  → live site scaled down in a sandboxed iframe
-// "browser" → mock browser chrome with animated gradient (always works)
-const PREVIEW_MODE: "image" | "iframe" | "browser" | "none" = "iframe"
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── Card grid (mobile) ───────────────────────────────────────────────────────
 
-function GithubIcon({ className }: { className?: string }) {
+const cardContainer: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.1 } },
+}
+
+const cardVariant: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.21, 0.47, 0.32, 0.98] } },
+}
+
+function ProjectCard({ project, index }: { project: typeof projects[0]; index: number }) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [scale, setScale] = useState(0.25)
+
+  useEffect(() => {
+    const update = () => {
+      if (containerRef.current) setScale(containerRef.current.offsetWidth / 1280)
+    }
+    update()
+    window.addEventListener("resize", update)
+    return () => window.removeEventListener("resize", update)
+  }, [])
+
   return (
-    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
-      <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
-    </svg>
+    <motion.div
+      variants={cardVariant}
+      className="relative flex flex-col rounded-lg overflow-hidden border border-border group hover:border-[var(--accent-red)]/40 transition-colors duration-300"
+    >
+      <span className="absolute top-2 left-3 z-10 font-mono text-[10px] tracking-widest text-[var(--text-muted)]/70 bg-[#0b0a0a]/80 px-1.5 py-0.5 rounded">
+        {String(index + 1).padStart(3, "0")}
+      </span>
+      <div ref={containerRef} className="relative aspect-[16/10] overflow-hidden bg-[#0d0d0d]">
+        {project.demo && project.demo !== "#" ? (
+          <iframe
+            src={project.demo}
+            title={project.title}
+            className="absolute top-0 left-0 border-0 pointer-events-none"
+            style={{ width: "1280px", height: "800px", transform: `scale(${scale})`, transformOrigin: "top left" }}
+            sandbox="allow-scripts allow-same-origin"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-[var(--text-muted)] text-xs">No live URL</div>
+        )}
+      </div>
+      <div className="flex flex-col flex-1 gap-3 p-4">
+        <h3 className="font-semibold text-foreground text-sm leading-snug">{project.title}</h3>
+        <p className="text-xs text-[var(--text-muted)] leading-relaxed flex-1">{project.description}</p>
+        <div className="flex flex-wrap gap-1.5">
+          {project.tags.map((tag) => (
+            <Badge key={tag} variant="secondary"
+              className="text-[8px] px-2 py-0.5 bg-[#171314] text-[var(--text-muted)] border-border group-hover:text-foreground transition-colors rounded uppercase">
+              {tag}
+            </Badge>
+          ))}
+        </div>
+        <div className="flex justify-end pt-1">
+          {project.demo && project.demo !== "#" && (
+            <a href={project.demo} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-xs border border-border px-3 py-1.5 rounded hover:border-[var(--accent-red)] hover:text-[var(--accent-red)] text-[var(--text-muted)] transition-all duration-200">
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
+        </div>
+      </div>
+    </motion.div>
   )
 }
 
-const projects = [
-  {
-    title: "Afristakes",
-    description: "Structured capital platform connecting African businesses with investors",
-    image: "/projects/intense-proxy-1.jpg",
-    tags: ["React", "Typescript", "TailwindCSS", "Zustand", "PusherJs", "Shadcn"],
-    demo: "https://afristakes.com",
-    github: null,
-    gradient: "from-[#1a1a2e] via-[#16213e] to-[#0f3460]",
-  },
-  {
-    title: "Billboxx Technologies",
-    description: "Handles all invoice-related tasks, including issue, payment, and reconciliation, for businesses of all sizes",
-    image: "/projects/aape-coin.jpg",
-    tags: ["React", "Typescript", "TailwindCSS", "Zustand", "Shadcn"],
-    demo: "https://app.billboxx.com",
-    github: null,
-    gradient: "from-[#0d1b2a] via-[#1b2838] to-[#2d4a6b]",
-  },
-  {
-    title: "Vendorstack",
-    description: "Creativity induced e-commerce application allowing you to shop and also create content to share with your circle of friends",
-    image: "/projects/soundify.jpg",
-    tags: ["React", "React Native", "Typescript", "Websocket"],
-    demo: "https://www.getvendorstack.com/",
-    github: null,
-    gradient: "from-[#0a1a2e] via-[#0f2d4d] to-[#1a4a7a]",
-  },
-  {
-    title: "Request Mechanic",
-    description: "A platform that connects automobile users to the nearest automobile experts.",
-    image: "/projects/blockchain-explorer.jpg",
-    tags: ["React", "Javascript", "TailwindCSS", "Redux"],
-    demo: "https://requestmechanic.com",
-    github: null,
-    gradient: "from-[#1a0a2e] via-[#2d1b4e] to-[#4a2080]",
-  },
-  {
-    title: "Folawej Laundromat",
-    description: "World-class laundry experience with self-service facilities, coin-operated machines, and mobile app integration",
-    image: "/projects/gitprofile.jpg",
-    tags: ["React", "Typescript", "Redux", "Ionic"],
-    demo: "https://folawej.com",
-    github: null,
-    gradient: "from-[#0a2e1a] via-[#0f4d2a] to-[#1a7a42]",
-  },
-  {
-    title: "Bluelight Studios",
-    description: "Solving user problems through the use of software and technologies",
-    image: "/projects/moviedb.jpg",
-    tags: ["React.js", "TypeScript", "TailwindCSS", "Redux", "Zustand"],
-    demo: "https://www.bluelight.studio",
-    github: null,
-    gradient: "from-[#2e0a0a] via-[#4d1515] to-[#7a2020]",
-  },
-]
-
-// ─── Preview components ───────────────────────────────────────────────────────
-
-function ImagePreview({ src, alt }: { src: string; alt: string }) {
-  return (
-    <div className="relative aspect-[16/10] overflow-hidden bg-[#0d0d0d]">
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        className="object-cover transition-transform duration-500 group-hover:scale-105"
-        onError={(e) => { (e.target as HTMLImageElement).style.display = "none" }}
-      />
-    </div>
-  )
-}
+// ─── List preview (desktop) ───────────────────────────────────────────────────
 
 function IframePreview({ url, title }: { url: string; title: string }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(0.25)
 
   useEffect(() => {
-    const updateScale = () => {
-      if (containerRef.current) {
-        setScale(containerRef.current.offsetWidth / 1280)
-      }
+    const update = () => {
+      if (containerRef.current) setScale(containerRef.current.offsetWidth / 1280)
     }
-    updateScale()
-    window.addEventListener("resize", updateScale)
-    return () => window.removeEventListener("resize", updateScale)
+    update()
+    window.addEventListener("resize", update)
+    return () => window.removeEventListener("resize", update)
   }, [])
 
-  const isPlaceholder = !url || url === "#"
   return (
     <div ref={containerRef} className="relative aspect-[16/10] overflow-hidden bg-[#0d0d0d]">
-      {isPlaceholder ? (
+      {!url || url === "#" ? (
         <div className="w-full h-full flex items-center justify-center text-[var(--text-muted)] text-xs">
           No live URL
         </div>
@@ -136,109 +119,150 @@ function IframePreview({ url, title }: { url: string; title: string }) {
   )
 }
 
-function BrowserPreview({ url, title, gradient }: { url: string; title: string; gradient: string }) {
-  const displayUrl = url === "#" ? "localhost:3000" : url.replace("https://", "")
-  return (
-    <div className="aspect-[16/10] overflow-hidden rounded-t-lg flex flex-col">
-      {/* Browser chrome */}
-      <div className="flex items-center gap-2 px-3 py-2 bg-[#2a2a2a] shrink-0">
-        <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
-        <span className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
-        <span className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
-        <div className="flex-1 mx-2 bg-[#1a1a1a] rounded text-[9px] text-[var(--text-muted)] px-2 py-0.5 truncate font-mono">
-          {displayUrl}
-        </div>
-      </div>
-      {/* Viewport */}
-      <div className={`flex-1 bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-        <span className="text-white/20 text-lg font-bold tracking-widest uppercase">{title}</span>
-      </div>
-    </div>
-  )
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-
-const container: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.1 } },
-}
-
-const card: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.55, ease: [0.21, 0.47, 0.32, 0.98] },
-  },
-}
-
 export default function FeaturedProjects() {
+  const [hovered, setHovered] = useState<number | null>(null)
+  const featured = projects.slice(0, FEATURED_COUNT)
+
   return (
     <section id="projects" className="py-24">
       <div className="max-w-5xl mx-auto px-6">
         <SectionHeading index="02" title="Featured Projects" kanji="作品" />
 
+        {/* ── Mobile: card grid ── */}
         <motion.div
-          variants={container}
+          variants={cardContainer}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-80px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:hidden"
         >
-          {projects.map((project, i) => (
-            <motion.div
-              key={project.title}
-              variants={card}
-              className="relative flex flex-col rounded-lg overflow-hidden border border-border group hover:border-[var(--accent-red)]/40 transition-colors duration-300"
-            >
-              {/* Editorial index */}
-              <span className="absolute top-2 left-3 z-10 font-mono text-[10px] tracking-widest text-[var(--text-muted)]/70 bg-[#0b0a0a]/80 px-1.5 py-0.5 rounded">
-                {String(i + 1).padStart(3, "0")}
-              </span>
-              {/* Preview — swap PREVIEW_MODE above to change */}
-              {PREVIEW_MODE === "image" && (
-                <ImagePreview src={project.image} alt={project.title} />
-              )}
-              {PREVIEW_MODE === "iframe" && (
-                <IframePreview url={project.demo ?? "#"} title={project.title} />
-              )}
-              {PREVIEW_MODE === "browser" && (
-                <BrowserPreview url={project.demo ?? "#"} title={project.title} gradient={project.gradient} />
-              )}
-
-              {/* Body */}
-              <div className="flex flex-col flex-1 gap-3 p-4">
-                <h3 className="font-semibold text-foreground text-sm leading-snug">{project.title}</h3>
-                <p className="text-xs text-[var(--text-muted)] leading-relaxed flex-1">{project.description}</p>
-
-                <div className="flex flex-wrap gap-1.5">
-                  {project.tags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="secondary"
-                      className="text-[8px] px-2 py-0.5 bg-[#171314] text-[var(--text-muted)] border-border group-hover:text-foreground transition-colors rounded uppercase"
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-
-                <div className="flex items-end justify-end gap-2 pt-1">
-                  {project.demo && project.demo !== "#" && (
-                    <a
-                      href={project.demo}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 text-xs border border-border px-3 py-1.5 rounded hover:border-[var(--accent-red)] hover:text-[var(--accent-red)] text-[var(--text-muted)] transition-all duration-200"
-                    >
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
-                  )}
-                </div>
-              </div>
-            </motion.div>
+          {featured.map((project, i) => (
+            <ProjectCard key={project.title} project={project} index={i} />
           ))}
+        </motion.div>
+
+        {/* ── Desktop: hover-reveal list ── */}
+        <div className="hidden lg:flex gap-10">
+
+          {/* ── Project list ── */}
+          <div className="flex-1 min-w-0">
+            {featured.map((project, i) => (
+              <motion.div
+                key={project.title}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.5, delay: i * 0.08, ease: [0.21, 0.47, 0.32, 0.98] }}
+                onMouseEnter={() => setHovered(i)}
+                onMouseLeave={() => setHovered(null)}
+                className="group relative flex items-start gap-5 py-5 border-b border-border hover:border-[var(--accent-red)]/30 transition-colors duration-300 cursor-default"
+              >
+                {/* Left accent bar on hover */}
+                <motion.span
+                  className="absolute -left-6 top-0 bottom-0 w-px bg-[var(--accent-red)]"
+                  initial={{ scaleY: 0 }}
+                  animate={{ scaleY: hovered === i ? 1 : 0 }}
+                  transition={{ duration: 0.2 }}
+                />
+
+                {/* Index */}
+                <span className="font-mono text-[10px] tracking-widest text-[var(--accent-red)]/50 shrink-0 w-6">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+
+                {/* Info + tags */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-sm text-foreground group-hover:text-[var(--accent-red)] transition-colors duration-200 truncate">
+                    {project.title}
+                  </h3>
+                  <p className="text-[11px] text-[var(--text-muted)] mt-0.5 truncate leading-relaxed">
+                    {project.description}
+                  </p>
+                  <div className="flex gap-1.5 flex-wrap mt-2">
+                    {project.tags.map((tag) => (
+                      <Badge
+                        key={tag}
+                        variant="secondary"
+                        className="text-[8px] px-2 py-0.5 bg-[#171314] text-[var(--text-muted)] border-border rounded uppercase"
+                      >
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                {/* External link */}
+                {project.demo && project.demo !== "#" && (
+                  <a
+                    href={project.demo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="shrink-0 text-[var(--text-muted)] hover:text-[var(--accent-red)] opacity-0 group-hover:opacity-100 transition-all duration-200"
+                    aria-label={`Open ${project.title}`}
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
+              </motion.div>
+            ))}
+          </div>
+
+          {/* ── Preview pane — desktop only ── */}
+          <div className="hidden lg:block w-72 shrink-0">
+            <div className="sticky top-[calc(50vh-9rem)]">
+              <AnimatePresence mode="wait">
+                {hovered !== null ? (
+                  <motion.div
+                    key={hovered}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.18 }}
+                    className="rounded-xl overflow-hidden border border-border shadow-2xl"
+                  >
+                    <IframePreview
+                      url={featured[hovered].demo ?? "#"}
+                      title={featured[hovered].title}
+                    />
+                    <div className="px-4 py-3 bg-[#111111] border-t border-border">
+                      <p className="text-xs font-semibold text-foreground">{featured[hovered].title}</p>
+                      <p className="text-[10px] text-[var(--text-muted)] mt-0.5 line-clamp-1">{featured[hovered].description}</p>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="placeholder"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="rounded-xl border border-dashed border-border/40 aspect-[16/10] flex items-center justify-center"
+                  >
+                    <p className="font-mono text-[10px] tracking-widest uppercase text-[var(--text-muted)]/30">
+                      hover to preview
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
+
+        {/* View all CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="mt-10 flex justify-center"
+        >
+          <Link
+            href="/projects"
+            className="group flex items-center gap-2 font-mono text-xs tracking-[0.2em] uppercase text-[var(--text-muted)] hover:text-foreground border border-border hover:border-[var(--accent-red)]/60 px-6 py-3 rounded transition-all duration-300"
+          >
+            View all projects
+            <span className="text-[var(--accent-red)] group-hover:translate-x-1 transition-transform duration-200">→</span>
+          </Link>
         </motion.div>
       </div>
     </section>

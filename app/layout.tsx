@@ -5,7 +5,6 @@ import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import CalendlyWidget from "@/components/CalendlyWidget"
 import MusicWidget from "@/components/MusicWidget"
-import KunaiCursor from "@/components/KunaiCursor"
 import { Analytics } from "@vercel/analytics/next"
 import LoadingScreen from "@/components/LoadingScreen"
 
@@ -59,7 +58,6 @@ export default function RootLayout({
         <Footer />
         <MusicWidget />
         <CalendlyWidget />
-        <KunaiCursor />
         <LoadingScreen />
         <Analytics />
       </body>

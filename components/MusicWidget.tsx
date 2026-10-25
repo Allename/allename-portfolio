@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import { ExternalLink } from "lucide-react"
@@ -12,6 +12,7 @@ interface NowPlaying {
   artist?: string
   albumArt?: string
   songUrl?: string
+  songUri?: string
   progress?: number
   duration?: number
 }
@@ -64,6 +65,39 @@ function Equalizer() {
   )
 }
 
+// ─── Marquee: scrolls only when text overflows the container ─────────────────
+
+function MarqueeText({ text, className }: { text: string; className?: string }) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const measureRef = useRef<HTMLSpanElement>(null)
+  const [overflows, setOverflows] = useState(false)
+
+  useLayoutEffect(() => {
+    if (!containerRef.current || !measureRef.current) return
+    setOverflows(measureRef.current.offsetWidth > containerRef.current.offsetWidth)
+  }, [text])
+
+  return (
+    <div ref={containerRef} className="relative overflow-hidden whitespace-nowrap">
+      {/* Always-rendered hidden span used purely for measurement */}
+      <span ref={measureRef} className={`${className} absolute invisible pointer-events-none`}>{text}</span>
+
+      {overflows ? (
+        <motion.div
+          className="inline-flex"
+          animate={{ x: ["0%", "-50%"] }}
+          transition={{ duration: 16, repeat: Infinity, ease: "linear", repeatDelay: 1.5 }}
+        >
+          <span className={`${className} pr-1`}>{text}</span>
+          <span className={`${className} pr-1`} aria-hidden>{text}</span>
+        </motion.div>
+      ) : (
+        <span className={className}>{text}</span>
+      )}
+    </div>
+  )
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function MusicWidget() {
@@ -71,6 +105,7 @@ export default function MusicWidget() {
   const [spotifyHovered, setSpotifyHovered] = useState(false)
   const [spotifyOpen, setSpotifyOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const widgetRef = useRef<HTMLDivElement>(null)
 
   // Lightweight background fetch — only updates the live dot
   async function fetchNowPlaying({ showLoading = false } = {}) {
@@ -93,6 +128,22 @@ export default function MusicWidget() {
     return () => clearInterval(interval)
   }, [])
 
+  // Close card on outside tap (mobile)
+  useEffect(() => {
+    if (!spotifyOpen) return
+    function handleOutside(e: MouseEvent | TouchEvent) {
+      if (widgetRef.current && !widgetRef.current.contains(e.target as Node)) {
+        setSpotifyOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleOutside)
+    document.addEventListener("touchstart", handleOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleOutside)
+      document.removeEventListener("touchstart", handleOutside)
+    }
+  }, [spotifyOpen])
+
   // Re-fetch with loading state on hover — card always shows fresh data
   function handleSpotifyHover(hovered: boolean) {
     setSpotifyHovered(hovered)
@@ -107,14 +158,17 @@ export default function MusicWidget() {
       : 0
 
   return (
-    <div id="music-widget" className="floating-widget fixed right-4 top-1/7 lg:top-1/2 -translate-y-1/2 z-40 flex flex-col items-end gap-3 mt-8">
+    <div id="music-widget" ref={widgetRef} className="floating-widget fixed right-4 top-1/7 lg:top-1/2 -translate-y-1/2 z-40 flex flex-col items-end gap-3 mt-8">
 
       {/* ── Spotify ── */}
       <div
-        className="flex items-center gap-2"
+        className="relative flex items-start"
         onMouseEnter={() => handleSpotifyHover(true)}
         onMouseLeave={() => handleSpotifyHover(false)}
       >
+        {/* Invisible bridge fills the mr-2 gap so moving mouse to card doesn't re-trigger hover */}
+        <div className="absolute right-full top-0 bottom-0 w-2" />
+
         {/* Expanded now-playing card */}
         <AnimatePresence>
           {showCard && (
@@ -123,10 +177,10 @@ export default function MusicWidget() {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 12, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="bg-[#1f1e1e] border border-border rounded-xl p-3 w-64 shadow-xl"
+              className="absolute top-0 lg:top-1/2 lg:-translate-y-1/2 right-full mr-2 bg-[#1a1919] border border-white/10 rounded-2xl overflow-hidden w-48 shadow-2xl cursor-default"
             >
               {loading ? (
-                <div className="flex items-center gap-2 py-1">
+                <div className="flex items-center justify-center gap-2 py-16">
                   {[0, 1, 2].map((i) => (
                     <motion.span
                       key={i}
@@ -138,44 +192,56 @@ export default function MusicWidget() {
                 </div>
               ) : nowPlaying.isPlaying ? (
                 <>
-                  <div className="flex gap-3 items-center mb-2">
+                  {/* Album art — full width square */}
+                  <div className="relative w-full aspect-square">
                     {nowPlaying.albumArt && (
-                      <div className="relative w-10 h-10 rounded-md overflow-hidden shrink-0">
-                        <Image
-                          src={nowPlaying.albumArt}
-                          alt="album art"
-                          fill
-                          className="object-cover"
+                      <Image
+                        src={nowPlaying.albumArt}
+                        alt="album art"
+                        fill
+                        className="object-cover"
+                      />
+                    )}
+                    {/* Equalizer badge over art */}
+                    <div className="absolute bottom-2 right-2 bg-black/50 backdrop-blur-sm rounded px-1.5 py-1">
+                      <Equalizer />
+                    </div>
+                  </div>
+
+                  {/* Info row */}
+                  <div className="px-3 pt-2 pb-3 flex flex-col gap-0">
+                    {/* Scrolling title — only if it overflows */}
+                    <MarqueeText
+                      text={nowPlaying.title ?? ""}
+                      className="text-[13px] font-semibold text-foreground leading-tight"
+                    />
+                    <MarqueeText
+                      text={nowPlaying.artist ?? ""}
+                      className="text-[10px] text-[var(--text-muted)] leading-tight"
+                    />
+
+                    {/* Progress bar + link */}
+                    <div className="flex items-center gap-2 pt-1">
+                      <div className="flex-1 h-[2px] bg-white/10 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-[var(--accent-red)] rounded-full transition-all duration-1000"
+                          style={{ width: `${progress}%` }}
                         />
                       </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5 min-w-0">
-                        <p className="text-xs font-semibold text-foreground truncate">{nowPlaying.title}</p>
-                        <a
-                          href={nowPlaying.songUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="shrink-0 text-[var(--text-muted)] hover:text-[var(--accent-red)] transition-colors"
-                          aria-label="Open on Spotify"
-                        >
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                      </div>
-                      <p className="text-[10px] text-[var(--text-muted)] truncate">{nowPlaying.artist}</p>
+                      <a
+                        href={nowPlaying.songUri ?? nowPlaying.songUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="shrink-0 text-[var(--text-muted)] hover:text-[var(--accent-red)] transition-colors"
+                        aria-label="Open on Spotify"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
                     </div>
-                    <Equalizer />
-                  </div>
-                  {/* Progress bar */}
-                  <div className="h-0.5 bg-border rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-[var(--accent-red)] rounded-full transition-all duration-1000"
-                      style={{ width: `${progress}%` }}
-                    />
                   </div>
                 </>
               ) : (
-                <p className="text-xs text-[var(--text-muted)] text-center py-1">Not playing anything right now</p>
+                <p className="text-xs text-[var(--text-muted)] text-center py-8 px-3">Not playing anything right now</p>
               )}
             </motion.div>
           )}
@@ -190,7 +256,7 @@ export default function MusicWidget() {
             setSpotifyOpen(next)
             if (next) fetchNowPlaying({ showLoading: true })
           }}
-          className="w-9 h-9 rounded-full bg-[#1f1e1e] border border-border flex items-center justify-center relative"
+          className="w-9 h-9 rounded-full bg-[#1f1e1e] border border-border flex items-center justify-center relative cursor-pointer"
           aria-label="Spotify"
         >
           <SpotifyIcon className="w-4 h-4 text-[var(--accent-red)]" />

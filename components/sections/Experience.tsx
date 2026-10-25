@@ -25,7 +25,7 @@ const jobs = [
     role: "Frontend Engineer",
     type: "contract" as EmploymentType,
     location: "Remote",
-    period: "Jan 2026 to Mar 2026",
+    period: "Feb 2026 to Mar 2026",
     kanji: "投",
     blurb:
       "Structured capital platform connecting African businesses with investors.",
@@ -36,7 +36,7 @@ const jobs = [
     role: "Frontend Engineer",
     type: "freelance" as EmploymentType,
     location: "Remote",
-    period: "Feb 2025 to Dec 2025",
+    period: "Feb 2025 to May 2025",
     kanji: "筆",
     blurb:
       "Content platform for managing, editing and organizing blogs and articles on WordPress with ease.",
@@ -58,7 +58,7 @@ const jobs = [
     role: "Frontend Engineer",
     type: "full-time" as EmploymentType,
     location: "Remote",
-    period: "Sept 2023 to May 2024",
+    period: "Sept 2023 to Present",
     kanji: "請",
     blurb:
       "B2B billing-to-payment platform helping businesses issue invoices, collect payments and reconcile books faster.",

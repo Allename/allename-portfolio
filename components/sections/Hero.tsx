@@ -87,8 +87,43 @@ export default function Hero() {
         src="/images/itachi.sharingan.svg"
         alt=""
         aria-hidden="true"
-        className="sharingan-spin absolute -right-[15%] top-1/2 -translate-y-1/2 w-[55vw] max-w-[720px] opacity-[0.12] mix-blend-screen pointer-events-none select-none"
+        className="sharingan-spin hidden md:block absolute -right-[15%] top-1/2 -translate-y-1/2 w-[55vw] max-w-[720px] opacity-[0.12] mix-blend-screen pointer-events-none select-none"
         style={{ filter: "sepia(1) saturate(3) hue-rotate(310deg)" }}
+      />
+
+      {/* SVG filter: isolate red-dominant pixels (Sharingan eyes) */}
+      <svg aria-hidden="true" className="absolute w-0 h-0 overflow-hidden">
+        <defs>
+          <filter id="itachi-red-eyes" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+            <feColorMatrix
+              type="matrix"
+              values="2 -1 -1 0 0
+                      0  0  0 0 0
+                      0  0  0 0 0
+                      0  0  0 1 0"
+            />
+          </filter>
+        </defs>
+      </svg>
+
+      {/* Mobile layer 1: face silhouette — brightness-boosted greyscale */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/itachi-icon.jpg"
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover object-top pointer-events-none select-none md:hidden"
+        style={{ filter: "grayscale(1) brightness(3) contrast(1.2)", opacity: 0.02 }}
+      />
+
+      {/* Mobile layer 2: red eye glow — screen blended on top */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/itachi-icon.jpg"
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover object-top pointer-events-none select-none md:hidden mix-blend-screen"
+        style={{ filter: "url(#itachi-red-eyes)", opacity: 0.25 }}
       />
 
       {/* Drifting crow feathers */}
@@ -125,7 +160,7 @@ export default function Hero() {
           variants={container}
           initial="hidden"
           animate="show"
-          className="flex flex-col gap-7"
+          className="flex flex-col gap-5 md:gap-7"
         >
           <motion.p
             variants={item}
@@ -135,19 +170,17 @@ export default function Hero() {
           </motion.p>
 
           {/* Editorial stacked name */}
-          <motion.h1 variants={item} className="leading-[0.95] font-bold tracking-tight">
-            <span className="block text-[clamp(3rem,10vw,7.5rem)] uppercase">Allename</span>
-            <span className="block text-[clamp(3rem,10vw,7.5rem)] uppercase">
-              Anthony
-            </span>
+          <motion.h1 variants={item} className="leading-[0.9] font-bold tracking-tight">
+            <span className="block text-[clamp(2.8rem,11vw,7.5rem)] uppercase">Allename</span>
+            <span className="block text-[clamp(2.8rem,11vw,7.5rem)] uppercase">Anthony</span>
           </motion.h1>
 
           <motion.p
             variants={item}
-            className="max-w-md text-sm md:text-base text-[var(--text-muted)] leading-relaxed"
+            className="max-w-md text-xs md:text-base text-[var(--text-muted)] leading-relaxed"
           >
             Clean architecture, maintainable code, and experiences users genuinely
-            enjoy that&apos;s the craft I care about.
+            enjoy — that&apos;s the craft I care about.
           </motion.p>
 
           <motion.a
@@ -162,8 +195,8 @@ export default function Hero() {
             Let's work
           </motion.a>
 
-          {/* Numbered editorial links */}
-          <motion.nav variants={item} className="flex flex-wrap gap-x-7 gap-y-3 pt-3">
+          {/* Social links: icon-only on mobile, numbered labels on desktop */}
+          <motion.nav variants={item} aria-label="Social links" className="flex items-center gap-5 md:flex-wrap md:gap-x-7 md:gap-y-3 pt-1">
             {socialLinks.map((link, i) => {
               const Icon = link.icon
               return (
@@ -172,13 +205,19 @@ export default function Hero() {
                   href={link.href}
                   target={link.href.startsWith("mailto") ? undefined : "_blank"}
                   rel="noopener noreferrer"
-                  className="group flex items-baseline gap-1.5 text-sm text-[var(--text-muted)] hover:text-foreground transition-colors duration-200"
+                  aria-label={link.label}
+                  className="group flex items-center gap-1.5 text-[var(--text-muted)] hover:text-foreground transition-colors duration-200"
                 >
-                  <span className="font-mono text-[10px] text-[var(--accent-red)]/80">
-                    {String(i + 1).padStart(2, "0")}
+                  {/* Mobile: larger icon only */}
+                  <Icon className="md:hidden w-[18px] h-[18px] group-hover:text-[var(--accent-red)] transition-colors duration-200" />
+                  {/* Desktop: numbered label + icon */}
+                  <span className="hidden md:flex items-baseline gap-1.5 text-sm">
+                    <span className="font-mono text-[10px] text-[var(--accent-red)]/80">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="brush-link">{link.label}</span>
+                    <Icon className="w-3 h-3 self-center opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
                   </span>
-                  <span className="brush-link">{link.label}</span>
-                  <Icon className="w-3 h-3 self-center opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
                 </a>
               )
             })}

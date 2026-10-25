@@ -223,13 +223,6 @@
   }
 }
 
-/* ─── Kunai cursor: hide native pointer on precise devices ───────────────── */
-@media (pointer: fine) {
-  * {
-    cursor: none !important;
-  }
-}
-
 /* ─── Preloader gating: nothing shows until loading completes ────────────── */
 [data-loading="true"] .site-content {
   visibility: hidden;
