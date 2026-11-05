@@ -7,7 +7,7 @@ import Image from "next/image"
 import { Menu, X } from "lucide-react"
 
 const navLinks = [
-  { label: "Resume", href: "https://drive.google.com/file/d/1uqcMCticHEeKxROKatBBj73AINeHiPIZ/view?usp=sharing", external: true },
+  { label: "Resume", href: "https://drive.google.com/file/d/1uqcMCticHEeKxROKatBBj73AINeHiPIZ/view?usp=drive_link", external: true },
   { label: "Projects", href: "/projects", external: false },
   { label: "Contact", href: "/#contact", external: false },
 ]
